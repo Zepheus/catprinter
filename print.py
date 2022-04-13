@@ -82,6 +82,7 @@ def image(filename, log_level, img_binarization_algo, show_preview, devicename, 
 @click.option('--log-level', 
     type=click.Choice(['debug', 'info', 'warn', 'error'], case_sensitive=False), default="info")  # TODO generalise for all functions
 @click.option('--show-preview/--skip-preview', default=False)
+@click.option('--bold/--no-bold', default=False)
 @click.option("--devicename", type=str,  
     help='Specify the Bluetooth Low Energy (BLE) device name to    \
         search for. If not specified, the script will try to       \
@@ -89,7 +90,7 @@ def image(filename, log_level, img_binarization_algo, show_preview, devicename, 
         service UUIDs. Common names are similar to "GT01", "GB02", \
         "GB03".'
 )
-def text(text, font, font_size, log_level, show_preview, devicename):
+def text(text, font, font_size, log_level, show_preview, bold, devicename):
     log_level = getattr(logging, log_level.upper())
     logger = make_logger(log_level)
 
@@ -98,6 +99,7 @@ def text(text, font, font_size, log_level, show_preview, devicename):
         font_name=font,
         font_size=font_size,
         show_preview=show_preview,
+        bold=bold,
         logger=logger
     )
     if bin_img is None:

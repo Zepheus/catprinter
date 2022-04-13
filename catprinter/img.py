@@ -160,12 +160,13 @@ def text_to_img(
     show_preview,
     font_name,
     logger,
+    bold=False
 ):
     splitted = text.split("\n")
     font = ImageFont.truetype(font_name, font_size)
     _, descent = font.getmetrics()
 
-    text_height = int(max(font.getmask(txt).getbbox()[3] + descent for txt in splitted) * 0.9)
+    text_height = int(max(font.getmask(txt, stroke_width=1 if bold else 0).getbbox()[3] + descent for txt in splitted) * 0.9)
 
     num_lines = len(splitted)
     target_height = 2*TOP_BOTTOM_TEXT_MARGIN + (text_height * num_lines)
@@ -173,7 +174,7 @@ def text_to_img(
     img = Image.new('RGB', (PRINT_WIDTH, target_height), color = 'white')
     d = ImageDraw.Draw(img)
  
-    d.multiline_text((10, 0), text, font=font, fill=(0, 0, 0))
+    d.multiline_text((10, 0), text, font=font, fill=(0, 0, 0), stroke_width=1 if bold else 0)
 
     cv_img = np.asarray(img)
     cv_img = cv2.cvtColor(cv_img, cv2.COLOR_RGB2GRAY)

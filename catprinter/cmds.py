@@ -160,7 +160,7 @@ def cmds_print_img(img, dark_mode=False):
         CMD_GET_DEV_STATE + \
         CMD_SET_QUALITY_200_DPI + \
         CMD_LATTICE_START + \
-        cmd_set_energy(12000) + \
+        cmd_set_energy(20000) + \
         PRINTER_MODE + \
         cmd_feed_paper(30)
     for row in img:
