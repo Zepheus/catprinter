@@ -1,7 +1,11 @@
 import cv2
 from math import ceil
 import numpy as np
+from PIL import Image, ImageDraw, ImageFont
 
+from catprinter.cmds import PRINT_WIDTH
+
+TOP_BOTTOM_TEXT_MARGIN = 5
 
 def floyd_steinberg_dither(img):
     '''Applies the Floyd-Steinberf dithering to img, in place.
@@ -86,7 +90,16 @@ def halftone_dither(img):
         x_output = 0
     return canvas
 
-
+def preview_prompt(img):
+    # Convert from our boolean representation to float.
+    preview_img = img.astype(float)
+    cv2.imshow('Preview', preview_img)
+    # Calling waitKey(1) tells OpenCV to process its GUI events and actually display our image.
+    cv2.waitKey(1)
+    if input('🤔 Go ahead with print? [Y/n]? ').lower() == 'n':
+        return False
+    return True
+    
 def read_img(
         filename,
         print_width,
@@ -133,15 +146,42 @@ def read_img(
             f'unknown image binarization algorithm: {img_binarization_algo}')
 
     if show_preview:
-        # Convert from our boolean representation to float.
-        preview_img = resized.astype(float)
-        cv2.imshow('Preview', preview_img)
         logger.info('ℹ️  Displaying preview.')
-        # Calling waitKey(1) tells OpenCV to process its GUI events and actually display our image.
-        cv2.waitKey(1)
-        if input('🤔 Go ahead with print? [Y/n]? ').lower() == 'n':
+        if not preview_prompt(resized):
             logger.info('🛑 Aborted print.')
             return None
 
     # Invert the image before returning it.
     return ~resized
+
+def text_to_img(
+    text,
+    font_size,
+    show_preview,
+    font_name,
+    logger,
+):
+    splitted = text.split("\n")
+    font = ImageFont.truetype(font_name, font_size)
+    _, descent = font.getmetrics()
+
+    text_height = int(max(font.getmask(txt).getbbox()[3] + descent for txt in splitted) * 0.9)
+
+    num_lines = len(splitted)
+    target_height = 2*TOP_BOTTOM_TEXT_MARGIN + (text_height * num_lines)
+
+    img = Image.new('RGB', (PRINT_WIDTH, target_height), color = 'white')
+    d = ImageDraw.Draw(img)
+ 
+    d.multiline_text((10, 0), text, font=font, fill=(0, 0, 0))
+
+    cv_img = np.asarray(img)
+    cv_img = cv2.cvtColor(cv_img, cv2.COLOR_RGB2GRAY)
+    cv_img = cv_img > 127
+
+    if show_preview:
+        logger.info('ℹ️  Displaying preview.')
+        if not preview_prompt(cv_img):
+            logger.info('🛑 Aborted print.')
+            return None
+    return ~cv_img

@@ -159,14 +159,17 @@ def cmds_print_img(img, dark_mode=False):
     data = \
         CMD_GET_DEV_STATE + \
         CMD_SET_QUALITY_200_DPI + \
-        CMD_LATTICE_START
+        CMD_LATTICE_START + \
+        cmd_set_energy(12000) + \
+        PRINTER_MODE + \
+        cmd_feed_paper(30)
     for row in img:
         data += cmd_print_row(row)
     data += \
-        cmd_feed_paper(25) + \
+        cmd_feed_paper(30) + \
         CMD_SET_PAPER + \
         CMD_SET_PAPER + \
-        CMD_SET_PAPER + \
+        cmd_feed_paper(30) + \
         CMD_LATTICE_END + \
         CMD_GET_DEV_STATE
     return data

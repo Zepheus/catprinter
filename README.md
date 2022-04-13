@@ -18,7 +18,7 @@ $ pip install -r requirements.txt
 
 # Usage
 ```bash
-$ python print.py --help
+$ python print.py image --help
 usage: print.py [-h] [--log-level {debug,info,warn,error}] [--img-binarization-algo {mean-threshold,floyd-steinberg,halftone}]
                 [--show-preview] [--devicename DEVICENAME] [--darker]
                 filename
@@ -42,8 +42,10 @@ options:
 ```
 
 # Example
+
+## Printing an image
 ```bash
-% python print.py --show-preview test.png
+% python print.py image --show-preview --filename test.png
 ⏳ Applying Floyd-Steinberg dithering to image...
 ✅ Done.
 ℹ️ Displaying preview.
@@ -57,7 +59,20 @@ options:
 ⏳ Sending 2353 bytes of data in chunks of 101 bytes...
 ✅ Done.
 ```
-
+## Printing text (e.g. label)
+```bash
+% python print.py text --show-preview --text "Line 1\nLine two\nLine three"
+ℹ️  Displaying preview.
+🤔 Go ahead with print? [Y/n]? Y
+✅ Read image: (106, 384) (h, w) pixels
+✅ Generated BLE commands: 3570 bytes
+⏳ Trying to auto-discover a printer...
+✅ Got it. Address: E31574CB-2169-4958-D8DC-33A7603F0E09: GB03
+⏳ Connecting to E31574CB-2169-4958-D8DC-33A7603F0E09: GB03...
+✅ Connected: True; MTU: 248
+⏳ Sending 3570 bytes of data in chunks of 245 bytes...
+✅ Done.
+```
 
 # Different Algorithms
 
