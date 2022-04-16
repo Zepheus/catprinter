@@ -5,7 +5,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 from catprinter.cmds import PRINT_WIDTH
 
-TOP_BOTTOM_TEXT_MARGIN = 5
+TOP_BOTTOM_TEXT_MARGIN = 15
 
 def floyd_steinberg_dither(img):
     '''Applies the Floyd-Steinberf dithering to img, in place.
@@ -166,7 +166,7 @@ def text_to_img(
     font = ImageFont.truetype(font_name, font_size)
     _, descent = font.getmetrics()
 
-    text_height = int(max(font.getmask(txt, stroke_width=1 if bold else 0).getbbox()[3] + descent for txt in splitted) * 0.9)
+    text_height = int(max(font.getmask(txt, stroke_width=1 if bold else 0).getbbox()[3] + descent for txt in splitted if len(txt)) * 0.9)
 
     num_lines = len(splitted)
     target_height = 2*TOP_BOTTOM_TEXT_MARGIN + (text_height * num_lines)
